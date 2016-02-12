@@ -18,6 +18,7 @@ metadata {
 
 		command "arrived"
 		command "departed"
+		command "togglePresence"
 	}
 
 	simulator {
@@ -48,6 +49,18 @@ def arrived() {
 
 
 def departed() {
-	log.trace "Executing 'arrived'"
+	log.trace "Executing 'departed'"
 	sendEvent(name: "presence", value: "not present")
+}
+
+def togglePresence(){
+	log.trace "Executing 'togglePresence'"
+	//if the device is currently `not present`, let's trigger arrived() and make it `present`
+	if(device?.currentValue("presence")?.contains("not")){
+		arrived()
+	}
+	//otherwise let's trigger departed() and make it `not present`
+	else{
+		departed()
+	}
 }
