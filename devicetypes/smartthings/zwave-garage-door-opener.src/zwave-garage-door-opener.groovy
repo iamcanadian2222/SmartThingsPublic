@@ -22,6 +22,8 @@ metadata {
 		capability "Contact Sensor"
 		capability "Refresh"
 		capability "Sensor"
+		
+		command "toggle"
 
 		fingerprint deviceId: "0x4007", inClusters: "0x98"
 		fingerprint deviceId: "0x4006", inClusters: "0x98"
@@ -298,6 +300,19 @@ def open() {
 def close() {
 	secure(zwave.barrierOperatorV1.barrierOperatorSet(requestedBarrierState: BarrierOperatorSet.REQUESTED_BARRIER_STATE_CLOSE))
 }
+
+def toggle() {
+	log.trace "Executing 'toggle'"
+	//if the device is currently `not present`, let's trigger arrived() and make it `present`
+	if(device?.currentValue("contact")?.contains("closed")){
+		open()
+	}
+	//otherwise let's trigger departed() and make it `not present`
+	else{
+		close()
+	}
+}
+	
 
 /**
  * PING is used by Device-Watch in attempt to reach the Device
